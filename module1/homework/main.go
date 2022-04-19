@@ -2,13 +2,16 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"time"
 )
 
+/**
+可以参考的工程：
+https://github.com/wqhn2020/geekbang-02.git
+*/
 func main() {
 	// 1.1
-	//hw1_1()
+	hw1_1()
 	// 1.2
 	hw1_2()
 }
@@ -21,7 +24,7 @@ func main() {
 [“I”,“am”,“smart”,“and”,“strong”]
 */
 func hw1_1() {
-
+	fmt.Println("题目1.1")
 	source := [5]string{"I", "am", "stupid", "and", "weak"}
 	fmt.Printf("before: %s\n", source)
 
@@ -47,22 +50,24 @@ func hw1_1() {
 每一秒从队列中获取一个元素并打印，队列为空时消费者阻塞
 */
 func hw1_2() {
-
+	fmt.Println("题目1.2")
 	msgQueue := make(chan int, 10)
 
-	go func() {
-		for {
-			msgQueue <- rand.Int()
-			time.Sleep(time.Second)
-		}
-	}()
+	go produce(msgQueue)
 
-	go func() {
-		for {
-			msg := <-msgQueue
-			fmt.Printf("hello %d \n", msg)
-		}
-	}()
+	consume(msgQueue)
+}
 
-	time.Sleep(10 * time.Second)
+func produce(queue chan<- int) {
+	for i := 0; i < 10; i++ {
+		queue <- i
+		time.Sleep(time.Second)
+	}
+	close(queue)
+}
+
+func consume(queue <-chan int) {
+	for i := range queue {
+		fmt.Printf("Get data: %d\n", i)
+	}
 }
