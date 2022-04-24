@@ -45,7 +45,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Setting OS Env failed: %s\n", err.Error())
 	}
 
-	w.Header().Set("version", os.Getenv(VERSION))
+	w.Header().Set("version", os.Getenv(VERSION)) // Header key自动驼峰处理
 	// header from request
 	header := r.Header
 	for key, v := range header {
