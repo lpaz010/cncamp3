@@ -37,8 +37,8 @@ func main() {
 	}
 }
 
-// 作业1. 写Response的Header
-// 作业2. 环境变量
+// 作业1. 接收客户端 request，并将 request 中带的 header 写入 response header
+// 作业2. 读取当前系统的环境变量中的 VERSION 配置，并写入 response header
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	err := os.Setenv(VERSION, Version1000)
 	if err != nil {
@@ -57,12 +57,13 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	// write response body
 	_, err = w.Write([]byte("hello world"))
 	if err != nil {
-		return
+		w.WriteHeader(500)
+		io.WriteString(w, "server error\n")
 	}
 	printLog(w, r)
 }
 
-// 作业3. 环境变量
+// 作业3. Server 端记录访问日志包括客户端 IP，HTTP 返回码，输出到 server 端的标准输出
 func printLog(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.Path
 	remote := getClientIp(r)
@@ -72,8 +73,7 @@ func printLog(w http.ResponseWriter, r *http.Request) {
 		remote, method, url)
 }
 
-// 作业4. 环境变量
-// health checks
+// 作业4. 当访问 localhost/healthz 时，应返回 200
 func healthzHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "OK\n")
 	printLog(w, r)
